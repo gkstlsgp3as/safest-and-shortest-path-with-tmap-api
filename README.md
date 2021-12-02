@@ -1,4 +1,4 @@
-# safest-and-shortest-path-with-tmap-api
+# Safest and Shortest Path Finding with Tmap API
 Path finding algorithm to derive safety route in Korea on Tmap.
 
 ## The Project
