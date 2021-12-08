@@ -2,7 +2,8 @@
 Path finding algorithm to derive safety route in Korea on Tmap.
 
 ## The Project
-The project consists of the components below:
+The project consists of the components below:Even today, when security is strengthened, violent crimes and women's target crimes are still increasing anxiety at night. Considering that these crimes occur frequently, we are working on a project to ensure a safe way home
+
 
 ### 1. data
 - parsed from OpenStreetMap https://www.openstreetmap.org/ as .osm file
