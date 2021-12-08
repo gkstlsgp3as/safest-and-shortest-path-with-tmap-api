@@ -5,6 +5,8 @@ Path finding algorithm to derive safety route in Korea on Tmap.
 Even today, when security is strengthened, violent crimes targeting especially women are maximizing anxiety at night. Considering the occurence of these crimes are being more and more frequent, we are working on a project to ensure a safe way home.
 
 ## The Project
+Project demonstration video link: https://youtu.be/sxv-lOkBG6I
+
 The project consists of the components below.
 
 ### 1. data
