@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_map"
+        android:icon="@android:drawable/ic_menu_mapmode"
+        android:title="@string/길찾기" />
+    <item
+        android:id="@+id/menu_myplace"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="@string/내장소" />
+
+    <item android:title="Personal Setting">
+        <menu>
+            <item
+                android:id="@+id/menu_setting"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="@string/설정" />
+            <item
+                android:id="@+id/menu_help"
+                android:icon="@android:drawable/ic_menu_help"
+                android:title="@string/도움말" />
+        </menu>
+    </item>
+</menu>

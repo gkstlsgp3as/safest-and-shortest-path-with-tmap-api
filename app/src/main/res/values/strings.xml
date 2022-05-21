@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TmapYourGuard</string>
+    <string name="설정">설정</string>
+    <string name="내장소">내 장소</string>
+    <string name="도움말">도움말</string>
+    <string name="개인정보">개인정보</string>
+    <string name="길찾기">길찾기</string>
+    <string name="MyAccount">My Account</string>
 </resources>

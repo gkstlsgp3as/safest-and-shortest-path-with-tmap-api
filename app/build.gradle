@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdk 30
+    compileSdk 31
 
     defaultConfig {
         applicationId "com.catsruletheworld.tmapyourguard"
         minSdk 21
-        targetSdk 30
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -25,15 +25,36 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation files('libs/com.skt.Tmap_1.69.jar')
+    implementation files('libs/jsch-0.1.55.jar')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    implementation("com.squareup.okhttp3:okhttp:4.8.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.8.0")
+
+    //sidebar
+    //implementation"androidx.drawerlayout:drawerlayout:1.1.1" //이제 사용 안 해..
+    //플랫폼 & 기기 전반 시각적 요소 디자인
+    implementation 'com.google.android.material:material:1.6.0-beta01'
+    //이미지 모서리 둥글게
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+    //페이지 간 이동 쉽고 안정적
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.0-alpha03'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.0-alpha03'
+
+    //preference
+    implementation 'androidx.preference:preference:1.2.0'
 }

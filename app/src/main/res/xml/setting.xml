@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:key="location_category"
+        android:title="위치">
+
+        <SwitchPreference
+            android:key="location_allow"
+            android:title="위치 서비스"/>
+
+        <PreferenceScreen
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:key="vibrate_screen"
+            android:summary="사용 안 함"
+            android:title="방향 안내 진동">
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="vibrate"
+                android:title="방향 안내 진동" />
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="alarm_category"
+        android:title="알림">
+
+        <MultiSelectListPreference
+            android:entries="@array/message_type"
+            android:entryValues="@array/message_type"
+            android:key="message_type"
+            android:summary="소리"
+            android:title="위험구역 안내메세지 송출방식" />
+
+        <PreferenceScreen
+            android:key="alarm_screen"
+            android:title="경보음 송출"
+            android:summary="사용 안 함">
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="alarm"
+                android:title="경보음 송출"/>
+            <SeekBarPreference
+                android:key="alarm_shake"
+                android:title="흔들기 횟수"
+                android:defaultValue="2"
+                android:dependency="alarm"/>
+            <SeekBarPreference
+                android:key="alarm_intensity"
+                android:title="흔들기 강도"
+                android:defaultValue="3"
+                android:dependency="alarm"/>
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
