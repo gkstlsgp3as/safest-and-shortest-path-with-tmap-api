@@ -18,7 +18,8 @@
 
             android:layout_width="match_parent"
             android:layout_height="157dp"
-            android:background="#424368">
+            android:background="#424368"
+            app:expanded="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,7 +51,7 @@
                         android:background="#00000000"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.15"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/search" />
@@ -122,12 +123,46 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/PlaceLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/myPlace"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            </LinearLayout>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="집" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="학교" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="회사" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="내 장소" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+" />
+            </com.google.android.material.chip.ChipGroup>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/TmapLayout"
@@ -141,7 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="70dp"
-                app:layout_constraintBottom_toBottomOf="@+id/PlaceLayout"
+                app:layout_constraintBottom_toBottomOf="@+id/TmapLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:selectionRequired="true"
@@ -193,7 +228,7 @@
                 android:clickable="true"
                 app:backgroundTint="#FFFFFF"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/myPlace"
                 app:rippleColor="#43426B"
                 app:srcCompat="@android:drawable/stat_sys_phone_call" />
 
