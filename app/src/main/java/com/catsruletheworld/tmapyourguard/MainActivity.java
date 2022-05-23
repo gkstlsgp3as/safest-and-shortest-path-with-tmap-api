@@ -3,6 +3,7 @@ package com.catsruletheworld.tmapyourguard;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -22,12 +23,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -105,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         tMapView.setIconVisibility(true);
         tMapView.setMapType(TMapView.MAPTYPE_STANDARD);
         tMapView.setLanguage(TMapView.LANGUAGE_KOREAN);
-        tMapView.setTrackingMode(true); //화면 중심을 단말의 현재 위치로
 
         //gps 승인
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -115,9 +117,10 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
         tMapGps.setMinTime(1000);
         tMapGps.setMinDistance(10);
-        //tMapGps.setProvider(tMapGps.NETWORK_PROVIDER); //네트워크기반
-        tMapGps.setProvider(tMapGps.GPS_PROVIDER); //위성기반
+        tMapGps.setProvider(tMapGps.NETWORK_PROVIDER); //네트워크기반
+        //tMapGps.setProvider(tMapGps.GPS_PROVIDER); //위성기반
         tMapGps.OpenGps();
+        tMapView.setTrackingMode(true); //화면 중심을 단말의 현재 위치로
 
         //this.userLocation();
 
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         mShakeDetector = new shakeDetector();
         mShakeDetector.setOnShakeListener(new shakeDetector.OnShakeListener() {
             public void onShake(int count) { //흔들림 감지 시 할 행동
-                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.siren);
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.police);
                 mediaPlayer.start();
             }
         });
@@ -178,22 +181,26 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             }
         });
 
-        call = (FloatingActionButton) findViewById(R.id.call); //원래 위치: 위 25 오른쪽 16
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, 1);
+        }
+        call = (FloatingActionButton) findViewById(R.id.call);
         call.setOnClickListener(this);
         call.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Context context = view.getContext();
+                //Context context = view.getContext();
                 Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse("tel:112"));
+                intent.setData(Uri.parse("tel:01024763270")); //시연 중 전화 걸릴 경우 대비
                 try {
-                    context.startActivity(intent);
+                    startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return true;
             }
         });
+
         safest = (Button) findViewById(R.id.safest);
         safest.setOnClickListener(this);
         fastest = (Button) findViewById(R.id.fastest);
@@ -245,25 +252,30 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         Bitmap fireBitmap = BitmapFactory.decodeResource(Context1.getResources(),R.drawable.marker_green);
         Bitmap policeBitmap = BitmapFactory.decodeResource(Context1.getResources(),R.drawable.marker_orange);
 
-        for(int i = 0; i < policeArray.size(); i++) {
+        for(int i = 0; i < alarmArray.size(); i++) {
             TMapMarkerItem alarmMarker = new TMapMarkerItem();
-            TMapMarkerItem cctvMarker = new TMapMarkerItem();
-            TMapMarkerItem fireMarker = new TMapMarkerItem();
-            TMapMarkerItem policeMarker = new TMapMarkerItem();
             alarmMarker.setIcon(alarmBitmap);
-            cctvMarker.setIcon(cctvBitmap);
-            fireMarker.setIcon(fireBitmap);
-            policeMarker.setIcon(policeBitmap);
             alarmMarker.setTMapPoint(alarmArray.get(i));
-            cctvMarker.setTMapPoint(cctvArray.get(i));
-            fireMarker.setTMapPoint(fireArray.get(0));
-            policeMarker.setTMapPoint(policeArray.get(i));
             tMapView.addMarkerItem("alarm" + i, alarmMarker);
-            tMapView.addMarkerItem("cctv" + i, cctvMarker);
+        }
+        for(int i = 0; i < cctvArray.size(); i++) {
+            TMapMarkerItem cctvMarker = new TMapMarkerItem();
+            cctvMarker.setIcon(cctvBitmap);
+            cctvMarker.setTMapPoint(cctvArray.get(i));
+            //tMapView.addMarkerItem("cctv" + i, cctvMarker);
+        }
+        for(int i = 0; i < fireArray.size(); i++) {
+            TMapMarkerItem fireMarker = new TMapMarkerItem();
+            fireMarker.setIcon(fireBitmap);
+            fireMarker.setTMapPoint(fireArray.get(i));
             tMapView.addMarkerItem("fire" + i, fireMarker);
+        }
+        for(int i = 0; i < policeArray.size(); i++) {
+            TMapMarkerItem policeMarker = new TMapMarkerItem();
+            policeMarker.setIcon(policeBitmap);
+            policeMarker.setTMapPoint(policeArray.get(i));
             tMapView.addMarkerItem("police" + i, policeMarker);
         }
-
     }
 
     public List<DBfire> DBload() throws SQLException {
@@ -277,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         return fireList;
     }
 
+    //oncreate 안에 넣어줘야하나..위에랑 이거 넣어줘야 하는듯. 해보쟈!
     public void addMarker(List<DBfire> fireList) {
         for (int i = 0; i < fireList.size(); i++){
             double lat = fireList.get(i).lat;
@@ -371,28 +384,22 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
          */
     }
 
+    double gpsLat, gpsLon;
+
+    @Override
+    public void onLocationChange(Location location) {
+        gpsLat = location.getLatitude();
+        gpsLon = location.getLongitude();
+        tMapView.setLocationPoint(gpsLat, gpsLon);
+        tMapView.setCenterPoint(gpsLat, gpsLon);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void onClick(View view) {
         TMapPoint tMapPoint;
         TextView route_distance = findViewById(R.id.route_info);
         double lat, lon, weight;
 
-        /*
-        String safest =
-                "37.5584009, 126.9413547, 0.4, " +
-                "37.558621, 126.9416095, 0.4, " +
-                "37.5582135, 126.9416316, 0.0, " +
-                "37.5582268, 126.9421708, 0.0, " +
-                "37.5578629, 126.9421915, 0.0, " +
-                "37.5578782, 126.9423849, 0.0, " +
-                "37.5579048, 126.942828, 0.0, " +
-                "37.5579233, 126.9434576, 0.0, " +
-                "37.5579832, 126.9446402, 0.0, " +
-                "37.5580056, 126.9451575, 0.0, " +
-                "37.5580341, 126.9458156, 0.0, " +
-                "37.5573445, 126.945881, 0.0, " +
-                "37.5570999, 126.9458687, 0.0, " +
-                "37.5568476, 126.9462521, 0.0, 671.42";
         String fastest =
                 "37.5584009, 126.9413547, 0.4, " +
                 "37.558621, 126.9416095, 0.4, " +
@@ -406,11 +413,26 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 "37.5580341, 126.9458156, 0.4, " +
                 "37.5573445, 126.945881, 0.0, " +
                 "37.5570999, 126.9458687, 0.0, " +
-                "37.5568476, 126.9462521, 0.0, 653.136";
-         */
+                "37.5568247, 126.945855, 0.0, 639.837";
 
-        String fastest = "37.5584009, 126.9413547, 0.4, 37.558621, 126.9416095, 0.4, 37.5584838, 126.9420978, 0.0, 37.5584094, 126.9421862, 0.4, 37.5584477, 126.9428002, 0.0, 37.5584777, 126.9434356, 0.0, 37.5583259, 126.943439, 0.0, 37.5583611, 126.9446118, 0.0, 37.5583961, 126.9457812, 0.0, 37.5580341, 126.9458156, 0.4, 37.5573445, 126.945881, 0.0, 37.5570999, 126.9458687, 0.0, 37.5568247, 126.945855, 0.0, 639.837";
-        String safest = "37.5584009, 126.9413547, 0.4, 37.558621, 126.9416095, 0.4, 37.5582135, 126.9416316, 0.0, 37.5582268, 126.9421708, 0.0, 37.5578629, 126.9421915, 0.0, 37.5578782, 126.9423849, 0.0, 37.5579048, 126.942828, 0.0, 37.5579233, 126.9434576, 0.0, 37.5577346, 126.9434715, 0.0, 37.5575959, 126.9434817, 0.4, 37.5576573, 126.9446648, 0.0, 37.5572754, 126.9446937, 0.0, 37.5573054, 126.9452099, 0.0, 37.5573445, 126.945881, 0.0, 37.5570999, 126.9458687, 0.0, 37.5568247, 126.945855, 0.0, 661.221";
+        String safest =
+                "37.5584009, 126.9413547, 0.4, " +
+                "37.558621, 126.9416095, 0.4, " +
+                "37.5582135, 126.9416316, 0.0, " +
+                "37.5582268, 126.9421708, 0.0, " +
+                "37.5578629, 126.9421915, 0.0, " +
+                "37.5578782, 126.9423849, 0.0, " +
+                "37.5579048, 126.942828, 0.0, " +
+                "37.5579233, 126.9434576, 0.0, " +
+                "37.5577346, 126.9434715, 0.0, " +
+                "37.5575959, 126.9434817, 0.4, " +
+                "37.5576573, 126.9446648, 0.0, " +
+                "37.5572754, 126.9446937, 0.0, " +
+                "37.5573054, 126.9452099, 0.0, " +
+                "37.5573445, 126.945881, 0.0, " +
+                "37.5570999, 126.9458687, 0.0, " +
+                "37.5568247, 126.945855, 0.0, 661.221";
+
         String[] SstringArray = safest.split(",");
         String[] FstringArray = fastest.split(",");
         double[] SdoubleArray = Arrays.stream(SstringArray).mapToDouble(Double::parseDouble).toArray();
@@ -418,60 +440,198 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         int Sdistance = (int) SdoubleArray[SdoubleArray.length - 1];
         int Fdistance = (int) FdoubleArray[FdoubleArray.length - 1];
 
-        TMapPolyLine StMapPolyLine = new TMapPolyLine();
-        TMapPolyLine FtMapPolyLine = new TMapPolyLine();
+        TMapPolyLine StMapPolyLine_0 = new TMapPolyLine();
+        TMapPolyLine StMapPolyLine_1 = new TMapPolyLine();
+        TMapPolyLine StMapPolyLine_2 = new TMapPolyLine();
+        TMapPolyLine StMapPolyLine_3 = new TMapPolyLine();
+        TMapPolyLine FtMapPolyLine_0 = new TMapPolyLine();
+        TMapPolyLine FtMapPolyLine_1 = new TMapPolyLine();
+        TMapPolyLine FtMapPolyLine_2 = new TMapPolyLine();
+        TMapPolyLine FtMapPolyLine_3 = new TMapPolyLine();
+        TMapPolyLine FtMapPolyLine_4 = new TMapPolyLine();
+        TMapPolyLine FtMapPolyLine_5 = new TMapPolyLine();
 
-        for (int i = 6; i < SdoubleArray.length - 1; i += 3) {
+        StMapPolyLine_0.addLinePoint(new TMapPoint(37.5584009, 126.9413547));
+        StMapPolyLine_0.addLinePoint(new TMapPoint(37.558621, 126.9416095));
+        StMapPolyLine_0.addLinePoint(new TMapPoint(37.5582135, 126.9416316));
+
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5582135, 126.9416316));
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5582268, 126.9421708));
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5578629, 126.9421915));
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5578782, 126.9423849));
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5579048, 126.942828));
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5579233, 126.9434576));
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5577346, 126.9434715));
+        StMapPolyLine_1.addLinePoint(new TMapPoint(37.5575959, 126.9434817));
+
+        StMapPolyLine_2.addLinePoint(new TMapPoint(37.5575959, 126.9434817));
+        StMapPolyLine_2.addLinePoint(new TMapPoint(37.5576573, 126.9446648));
+
+        StMapPolyLine_3.addLinePoint(new TMapPoint(37.5576573, 126.9446648));
+        StMapPolyLine_3.addLinePoint(new TMapPoint(37.5572754, 126.9446937));
+        StMapPolyLine_3.addLinePoint(new TMapPoint(37.5573054, 126.9452099));
+        StMapPolyLine_3.addLinePoint(new TMapPoint(37.5573445, 126.945881));
+        StMapPolyLine_3.addLinePoint(new TMapPoint(37.5570999, 126.9458687));
+        StMapPolyLine_3.addLinePoint(new TMapPoint(37.5568247, 126.945855));
+
+        StMapPolyLine_0.setLineColor(Color.YELLOW);
+        StMapPolyLine_0.setOutLineColor(Color.YELLOW);
+        StMapPolyLine_1.setLineColor(Color.RED);
+        StMapPolyLine_1.setOutLineColor(Color.RED);
+        StMapPolyLine_2.setLineColor(Color.YELLOW);
+        StMapPolyLine_2.setOutLineColor(Color.YELLOW);
+        StMapPolyLine_3.setLineColor(Color.RED);
+        StMapPolyLine_3.setOutLineColor(Color.RED);
+
+        FtMapPolyLine_0.addLinePoint(new TMapPoint(37.5584009, 126.9413547));
+        FtMapPolyLine_0.addLinePoint(new TMapPoint(37.558621, 126.9416095));
+        FtMapPolyLine_0.addLinePoint(new TMapPoint(37.5584838, 126.9420978));
+
+        FtMapPolyLine_1.addLinePoint(new TMapPoint(37.5584838, 126.9420978));
+        FtMapPolyLine_1.addLinePoint(new TMapPoint(37.5584094, 126.9421862));
+
+        FtMapPolyLine_2.addLinePoint(new TMapPoint(37.5584094, 126.9421862));
+        FtMapPolyLine_2.addLinePoint(new TMapPoint(37.5584477, 126.9428002));
+
+        FtMapPolyLine_3.addLinePoint(new TMapPoint(37.5584477, 126.9428002));
+        FtMapPolyLine_3.addLinePoint(new TMapPoint(37.5584777, 126.9434356));
+        FtMapPolyLine_3.addLinePoint(new TMapPoint(37.5583259, 126.943439));
+        FtMapPolyLine_3.addLinePoint(new TMapPoint(37.5583611, 126.9446118));
+        FtMapPolyLine_3.addLinePoint(new TMapPoint(37.5583961, 126.9457812));
+        FtMapPolyLine_3.addLinePoint(new TMapPoint(37.5580341, 126.9458156));
+
+        FtMapPolyLine_4.addLinePoint(new TMapPoint(37.5580341, 126.9458156));
+        FtMapPolyLine_4.addLinePoint(new TMapPoint(37.5573445, 126.945881));
+
+        FtMapPolyLine_5.addLinePoint(new TMapPoint(37.5573445, 126.945881));
+        FtMapPolyLine_5.addLinePoint(new TMapPoint(37.5570999, 126.9458687));
+        FtMapPolyLine_5.addLinePoint(new TMapPoint(37.5568247, 126.945855));
+
+        FtMapPolyLine_0.setLineColor(Color.YELLOW);
+        FtMapPolyLine_0.setOutLineColor(Color.YELLOW);
+        FtMapPolyLine_1.setLineColor(Color.RED);
+        FtMapPolyLine_1.setOutLineColor(Color.RED);
+        FtMapPolyLine_2.setLineColor(Color.YELLOW);
+        FtMapPolyLine_2.setOutLineColor(Color.YELLOW);
+        FtMapPolyLine_3.setLineColor(Color.RED);
+        FtMapPolyLine_3.setOutLineColor(Color.RED);
+        FtMapPolyLine_4.setLineColor(Color.YELLOW);
+        FtMapPolyLine_4.setOutLineColor(Color.YELLOW);
+        FtMapPolyLine_5.setLineColor(Color.RED);
+        FtMapPolyLine_5.setOutLineColor(Color.RED);
+
+        /*for (int i = 0; i < SdoubleArray.length - 1; i += 3) {
             lat = SdoubleArray[i];
             lon = SdoubleArray[i + 1];
             weight = SdoubleArray[i + 2];
 
             tMapPoint = new TMapPoint(lat, lon);
-            //범위 별로 수정필요!!!
-            if (weight == 0.0) {
-                StMapPolyLine.setLineColor(Color.RED);
-                StMapPolyLine.setOutLineColor(Color.RED);
-            } else {
-                StMapPolyLine.setLineColor(Color.YELLOW);
-                StMapPolyLine.setOutLineColor(Color.YELLOW);
-            }
+            StMapPolyLine.setLineColor(Color.RED);
+            StMapPolyLine.setOutLineColor(Color.RED);
+
             StMapPolyLine.addLinePoint(tMapPoint);
         }
 
-        for (int i = 9; i < FdoubleArray.length - 1; i += 3) {
+        for (int i = 0; i < FdoubleArray.length - 1; i += 3) {
             lat = FdoubleArray[i];
             lon = FdoubleArray[i + 1];
             weight = FdoubleArray[i + 2];
 
             tMapPoint = new TMapPoint(lat, lon);
-            if (weight == 0.0) {
-                FtMapPolyLine.setLineColor(Color.RED);
-                FtMapPolyLine.setOutLineColor(Color.RED);
-            } else {
-                FtMapPolyLine.setLineColor(Color.YELLOW);
-                FtMapPolyLine.setOutLineColor(Color.YELLOW);
-            }
-            FtMapPolyLine.addLinePoint(tMapPoint);
-        }
+            FtMapPolyLine.setLineColor(Color.RED);
+            FtMapPolyLine.setOutLineColor(Color.RED);
 
+            FtMapPolyLine.addLinePoint(tMapPoint);
+        }*/
 
         switch (view.getId()) {
             case R.id.safest:
                 tMapView.removeAllTMapPolyLine();
-                tMapView.addTMapPolyLine("SlineItem", StMapPolyLine);
+                tMapView.addTMapPolyLine("SlineItem_0", StMapPolyLine_0);
+                tMapView.addTMapPolyLine("SlineItem_1", StMapPolyLine_1);
+                tMapView.addTMapPolyLine("SlineItem_2", StMapPolyLine_2);
+                tMapView.addTMapPolyLine("SlineItem_3", StMapPolyLine_3);
                 //route_distance.setBackgroundColor(getResources().getColor(R.color.littlewhite));
                 route_distance.setBackgroundResource(R.drawable.round);
                 route_distance.setText(String.valueOf(Math.round(Sdistance * 0.015)) + "분(" + String.valueOf(Sdistance) + "m)");
                 break;
             case R.id.fastest:
                 tMapView.removeAllTMapPolyLine();
-                tMapView.addTMapPolyLine("FlineItem", FtMapPolyLine);
+                tMapView.addTMapPolyLine("FlineItem_0", FtMapPolyLine_0);
+                tMapView.addTMapPolyLine("FlineItem_1", FtMapPolyLine_1);
+                tMapView.addTMapPolyLine("FlineItem_2", FtMapPolyLine_2);
+                tMapView.addTMapPolyLine("FlineItem_3", FtMapPolyLine_3);
+                tMapView.addTMapPolyLine("FlineItem_4", FtMapPolyLine_4);
+                tMapView.addTMapPolyLine("FlineItem_5", FtMapPolyLine_5);
                 route_distance.setBackgroundResource(R.drawable.round);
                 route_distance.setText(String.valueOf(Math.round(Fdistance * 0.015)) + "분(" + String.valueOf(Fdistance) + "m)");
                 break;
             case R.id.startText:
             case R.id.endText:
                 break;
+            /*case R.id.gps:
+                tMapView.setCenterPoint(gpsLat, gpsLon);
+                break;*/
+            case R.id.call:
+                /*try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+
+                /*if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+                    int permissionResult = checkSelfPermission(Manifest.permission.CALL_PHONE);
+
+                    if (permissionResult == PackageManager.PERMISSION_DENIED) {
+                        if(shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)) {
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                            dialog.setTitle("권한이 필요합니다.")
+                                    .setMessage("이 기능을 사용하기 위해서는 단말기의 \"전화걸기\"권한이 필요합니다. 계속하시겠습니까?")
+                                    .setPositiveButton("네", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, 1000);
+                                            }
+                                        }
+                                    })
+                                    .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(MainActivity.this, "기능을 취소했습니다.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .create()
+                                    .show();
+                        }
+                        else {
+                            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, 1000);
+                        }
+                    }
+                    else {
+
+                    }
+                }
+                else {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:01024763270"));
+                    startActivity(intent);
+                }*/
+                break;
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1000) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:010-1111-2222"));
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "권한요청을 거부했습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -534,11 +694,5 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public void onLocationChange(Location location) {
-        tMapView.setLocationPoint(location.getLongitude(), location.getLatitude());
-        tMapView.setCenterPoint(location.getLongitude(), location.getLatitude());
     }
 }
