@@ -16,10 +16,9 @@ The project consists of the components below.
 - https://youtu.be/NBlI5N8AKLE
 
 ## Tech Stack
-<img src="https://img.shields.io/badge/aws-FF9900?style=for-the-badge&logo=aws&logoColor="white">
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor="white">
-<img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor="white">
-                                                                                                    
+<div align=center> 
+  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
+  <img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">                     <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">                       <img src="https://img.shields.io/badge/amazonaws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white">             </div>                                          
 
 ### 1. data
 - parsed from OpenStreetMap https://www.openstreetmap.org/ as .osm file
