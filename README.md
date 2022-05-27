@@ -48,8 +48,9 @@ The project consists of the components below.
 
 
 ### 3. server
-- contain public data: coordinates of CCTVs, street lights, and security lights (under development)
-- 
+- contain public data: coordinates of CCTVs, police office, firestation, alarmbell etc.
+- data management
+- HTTP Connection between Android Studio and Server
 
 ### 4. application
 - receive user's input for starting and destination points. (under development)
