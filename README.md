@@ -9,6 +9,15 @@ Project demonstration video link: https://youtu.be/sxv-lOkBG6I
 
 The project consists of the components below.
 
+## Flow Chart
+![image](https://user-images.githubusercontent.com/89958453/170620194-37fb6dcf-24d4-4e27-8b58-3aeb6cb7837e.png)
+
+## Video
+- https://youtu.be/NBlI5N8AKLE
+
+## Tool
+
+
 ### 1. data
 - parsed from OpenStreetMap https://www.openstreetmap.org/ as .osm file
 - converted to lighter xml (graphml) file 
@@ -40,6 +49,7 @@ The project consists of the components below.
 
 ### 3. server
 - contain public data: coordinates of CCTVs, street lights, and security lights (under development)
+- 
 
 ### 4. application
 - receive user's input for starting and destination points. (under development)
