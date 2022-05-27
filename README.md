@@ -15,8 +15,11 @@ The project consists of the components below.
 ## Video
 - https://youtu.be/NBlI5N8AKLE
 
-## Tool
-
+## Tech Stack
+<img src="https://img.shields.io/badge/aws-FF9900?style=for-the-badge&logo=aws&logoColor="white">
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor="white">
+<img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor="white">
+                                                                                                    
 
 ### 1. data
 - parsed from OpenStreetMap https://www.openstreetmap.org/ as .osm file
