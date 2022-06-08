@@ -27,6 +27,7 @@ The project consists of the components below.
 | seoul_graphml_weight_rev.json  | JSON data around Seoul with weights calculated according to surveilence dataset |
 
 - contain street data around Seoul. 
+- these data are too big, so we uploaded them on google drive on link: https://drive.google.com/drive/folders/19KEOB_Q7r2ih5qExDQpr6QTlE4az3Hx1?usp=sharing
 - the image of graphml file was converted to JSON file to facilitate data adjustment and enhance the loading speed.
 - ![image](https://user-images.githubusercontent.com/58411517/145157397-e077234a-2635-4486-a9ab-0c9aa5c18c11.png)
 
