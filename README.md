@@ -54,6 +54,6 @@ The project consists of the components below.
 ### 4. application
 - receive user's input for starting and destination points. (under development)
 - based on the user's input, the safest(under development) or fastest route are shown.
-- path finding result from Ewha station to Sinchon station on application with tmap api.
-- ![image](https://user-images.githubusercontent.com/58411517/145157507-57fe3f39-5932-4a07-a2ec-5704efb7050f.png)
+- path finding result from Ewha station to Yonsei villa on application with tmap api.
+- ![image](https://user-images.githubusercontent.com/58411517/172615764-b75d698f-5611-4b31-8554-42876d6c1ebb.png)
 
