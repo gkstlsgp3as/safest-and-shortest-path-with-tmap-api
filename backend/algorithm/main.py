@@ -4,11 +4,15 @@ import json
 #import server
 #import client
 #from threading import Thread, Lock
-import conSftp
+#import conSftp
 import requests
+import sys
 
 def main():
+    #loc = sys.argv[1]
     #loc = conSftp.getData('loc.txt')
+    #inputSourceLoc = (sys.argv[1], sys.argv[2])
+    #inputDestLoc = (sys.argv[3], sys.argv[4])
     #inputSourceLoc = (loc[0], loc[1])#(37.556729, 126.945855) # Ewha St.
     inputSourceLoc =  (37.5568, 126.9455)#(37.5568476, 126.9462521)  #(37.547640,126.941851) (37.546300, 126.940429
     #inputSourceLoc = (37.556997, 126.946378)
