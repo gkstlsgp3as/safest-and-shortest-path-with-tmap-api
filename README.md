@@ -43,10 +43,6 @@ The project consists of the components below.
 | astar.py  | define A* algorithm |
 | manXML.py  | define functions in managing graphxml file: getting OSM ID, neighbors, heuristic distances |
 
-- path finding result from Ewha station to Sinchon station on Google Map.
-- ![image](https://user-images.githubusercontent.com/58411517/145157293-97e49835-f434-44f5-95f8-5456dde0d458.png)
-
-
 ### 3. server
 - contain public data: coordinates of CCTVs, police office, firestation, alarmbell etc.
 - data management
