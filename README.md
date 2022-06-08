@@ -23,17 +23,17 @@ The project consists of the components below.
  
 | file name | explanation | 
 | :---      | :---      |
-| ewha.osm   | OpenStreetMap data around Ewha and Sinchon station |
-| ewha_graphml  | converted graphs from osm file |
+| seoul_graphml.json   | JSON data converted from OpenStreetMap data around Seoul |
+| seoul_graphml_weight_rev.json  | JSON data around Seoul with weights calculated according to surveilence dataset |
 
-- contain street data around Ewha and Sinchon stations. (would be expanded to larger region later.)
-- the image of graphml file around Ewha and Sinchon stations.
+- contain street data around Seoul. 
+- the image of graphml file was converted to JSON file to facilitate data adjustment and enhance the loading speed.
 - ![image](https://user-images.githubusercontent.com/58411517/145157397-e077234a-2635-4486-a9ab-0c9aa5c18c11.png)
 
 
 ### 2. algorithm
-- applied Dijkstra and A* algorithm
-- use public data as safety weights (under development)
+- applied A* algorithm
+- use public data as safety weights: the location of CCTVs, police stations, fire stations, and alarm bells around Seoul. 
 - .py files in demo folder are simple codes using sample graphs for apprehending the concept.
 
 | file name | function | 
@@ -49,11 +49,11 @@ The project consists of the components below.
 ### 3. server
 - contain public data: coordinates of CCTVs, police office, firestation, alarmbell etc.
 - data management
-- HTTP Connection between Android Studio and Server
+- HTTP Connection between Android Studio and Server using Node.js 
 
 ### 4. application
-- receive user's input for starting and destination points. (under development)
-- based on the user's input, the safest(under development) or fastest route are shown.
+- receive user's input for starting and destination points.
+- based on the user's input, the safest or fastest route are shown.
 - path finding result from Ewha station to Yonsei villa on application with tmap api.
 - ![image](https://user-images.githubusercontent.com/58411517/172615764-b75d698f-5611-4b31-8554-42876d6c1ebb.png)
 
