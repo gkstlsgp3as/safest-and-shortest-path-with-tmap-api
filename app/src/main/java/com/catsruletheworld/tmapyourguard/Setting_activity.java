@@ -47,10 +47,6 @@ public class Setting_activity extends AppCompatActivity {
                         intent = new Intent(Setting_activity.this, Help.class);
                         startActivity(intent);
                         break;
-                    case R.id.menu_myplace:
-                        intent = new Intent(Setting_activity.this, My_place.class);
-                        startActivity(intent);
-                        break;
                 }
                 drawerLayout.closeDrawer(navigationView);
                 return true;

@@ -47,10 +47,6 @@ public class Personal_info extends AppCompatActivity {
                         intent = new Intent(Personal_info.this, Help.class);
                         startActivity(intent);
                         break;
-                    case R.id.menu_myplace:
-                        intent = new Intent(Personal_info.this, My_place.class);
-                        startActivity(intent);
-                        break;
                 }
                 drawerLayout.closeDrawer(navigationView);
                 return true;

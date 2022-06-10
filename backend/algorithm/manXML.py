@@ -1,26 +1,34 @@
+import xmltodict
 from haversine import haversine
 import time
 import numpy as np
 from sklearn.neighbors import KDTree
-import json
 
 s = time.time()
 doc = {}
 
-with open('C:/Users/sienn/seoul_graphml_samp.json',encoding='utf-8') as f:
-    doc = json.load(f)
+with open('C:/Users/sienn/OneDrive/문서/대학/[2021-2] 캡스톤프로젝트/data/ewha_graphml',encoding='utf-8') as fd:
+    doc = xmltodict.parse(fd.read())
 print(time.time()-s)
 
 def getLatLon(OSMId):
-    lat = float(doc['nodes'][str(OSMId)]['lat'])
-    lon = float(doc['nodes'][str(OSMId)]['lon'])
+    lat, lon = 0, 0
+    nodes = doc['graphml']['graph']['node']
+
+    coords = [x for x in nodes if x["@id"]==str(OSMId)]
+    lat = float(coords[0]["data"][0]["#text"])
+    lon = float(coords[0]["data"][1]["#text"])
 
     return (lat, lon)
 
 def getOSMId(lat, lon):
-    for key, value in doc['nodes'].items():
-        if value['lon']==lon and value['lat']==lat:
-            return key
+    OSMId = 0
+    nodes = doc['graphml']['graph']['node']
+
+    result = [x for x in nodes if x["data"][0]["#text"]==str(lat) and x["data"][1]["#text"]==str(lon)]
+    OSMId = result[0]["@id"]
+
+    return OSMId
     
 def calcHeurist(curr,dest):
     return (haversine(curr,dest))
@@ -28,25 +36,23 @@ def calcHeurist(curr,dest):
 def getNeighb(OSMId, dest_latlon):
     neighbDict = {}
     tempList = []
-    result = [x for x in doc['edges'] if x['source']==str(OSMId)]
+    edges = doc['graphml']['graph']['edge']
 
-    for eachEdge in result:
+    result = [x for x in edges if x["@source"]==str(OSMId)]
+
+    for eachEdge in range(len(result)):
         temp_neighb = {}
         
         neighb_cost = 0
-        neighb_id = eachEdge["target"]
+        neighb_id = result[eachEdge]["@target"]
         neighb_latlon = getLatLon(neighb_id) 
+        
+        dataPoints = result[eachEdge]["data"]
 
-        neighb_cost = eachEdge["weight"]       
+        neighb_cost = [d for d in dataPoints if d["@key"]=="d10"][0]["#text"]        
         neighb_h = calcHeurist(neighb_latlon, dest_latlon)
-
-        neighb_weight = eachEdge["cctv"]*0.4+eachEdge["bell"]*0.3+\
-                        eachEdge["police"]*0.2+eachEdge["fire"]*0.1
-
-        #neighb_weight = neighb_cost - neighb_cost*neighb_weight
-
-        temp_neighb[neighb_id] = [neighb_latlon, neighb_cost, neighb_h, neighb_weight]
-
+        
+        temp_neighb[neighb_id] = [neighb_latlon, neighb_cost, neighb_h]
         tempList.append(temp_neighb)
             
     neighbDict[OSMId] = tempList
@@ -62,15 +68,14 @@ def getNeighbInfo(neighbDict):
         neighb_h = float(value[2])
         neighb_cost = float(value[1])/1000
         neighb_latlon = value[0]
-        neighb_weight = float(value[3])
-
-    return neighb_id, neighb_h, neighb_cost, neighb_latlon, neighb_weight
-
+        
+    return neighb_id, neighb_h, neighb_cost, neighb_latlon
 
 def getKNN(pointLoc):
+    nodes = doc["graphml"]["graph"]["node"]
     loc = []
-    for key, value in doc['nodes'].items():
-        loc.append((value['lat'], value['lon']))
+
+    loc = list(map(lambda x: (x["data"][0]["#text"], x["data"][1]["#text"]),nodes))
 
     loc_arr = np.asarray(loc, dtype=np.float32)
     point = np.asarray(pointLoc, dtype=np.float32)
@@ -87,20 +92,17 @@ def getResponsePathDict(paths, source, dest):
     child = dest
     parent = ()
     cost = 0
-    
+    #print(paths)
     while(parent!=source):
         tempDict = {}
         cost = cost + float(paths[str(child)]["cost"])
         parent = paths[str(child)]["parent"]
         parent = tuple(float(x) for x in parent.strip('()').split(','))
-        weight = paths[str(child)]["weight"]
         
         tempDict["lat"] = parent[0]
         tempDict["lon"] = parent[1]
-        tempDict["weight"] = weight
         
         finalPath.append(tempDict)
         child = parent
-
         
     return finalPath, cost

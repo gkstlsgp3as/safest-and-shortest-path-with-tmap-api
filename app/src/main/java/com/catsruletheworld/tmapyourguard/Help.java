@@ -47,10 +47,6 @@ public class Help extends AppCompatActivity {
                         intent = new Intent(Help.this, Help.class);
                         startActivity(intent);
                         break;
-                    case R.id.menu_myplace:
-                        intent = new Intent(Help.this, My_place.class);
-                        startActivity(intent);
-                        break;
                 }
                 drawerLayout.closeDrawer(navigationView);
                 return true;

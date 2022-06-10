@@ -2,6 +2,7 @@ package com.catsruletheworld.tmapyourguard;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -50,6 +52,7 @@ import com.skt.Tmap.poi_item.TMapPOIItem;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Button.OnClickListener, TMapGpsManager.onLocationChangedCallback {
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
 
         Context1 = this;
         this.initSidebar();
-        //new MainButton();
+
         try {
             fireList = DBload();
         } catch (SQLException throwables) {
@@ -121,8 +124,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         //tMapGps.setProvider(tMapGps.GPS_PROVIDER); //위성기반
         tMapGps.OpenGps();
         tMapView.setTrackingMode(true); //화면 중심을 단말의 현재 위치로
-
-        //this.userLocation();
 
         //흔들림 센서 감지
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -343,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                         return; //진동이 너무 짧으면 무시
                     }
                     if(shakeTimeStamp + shakeNum < current) {
-                        shakeCount = 0; // 3초 이싱 걸리면 리셋
+                        shakeCount = 0; // 3초 이상 걸리면 리셋
                     }
                     shakeTimeStamp = current;
                     shakeCount++;
@@ -367,21 +368,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(mShakeDetector);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void userLocation() {
-        Location location = null;
-        double lat = location.getLatitude();
-        double lon = location.getLongitude();
-        TMapPoint point = tMapGps.getLocation();
-
-        /*
-        1. 기존 경로의 꺾어지는 포인트마다 원그리기
-        2. 사용자의 위치를 받아와서 원안에 들어가면 진동 알림
-
-        1. 기존 경로의 꺾어지는 포인트와 사용자의 위치가 일정 거리로 가까워지면 진동 알림
-         */
     }
 
     double gpsLat, gpsLon;
@@ -440,10 +426,39 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         int Sdistance = (int) SdoubleArray[SdoubleArray.length - 1];
         int Fdistance = (int) FdoubleArray[FdoubleArray.length - 1];
 
+        LinkedHashMap<Integer, ArrayList> ShashMap = new LinkedHashMap<Integer, ArrayList>();
+
+        for(int i = 0; i < SdoubleArray.length; i+=3) {
+            int n = 0;
+            lat = SdoubleArray[i];
+            lon = SdoubleArray[i+1];
+            weight = SdoubleArray[i+2];
+
+            ArrayList<Double> data = new ArrayList<Double>();
+            data.add(lat);
+            data.add(lon);
+            data.add(weight);
+
+            ShashMap.put(n, data);
+            n++;
+        }
+
+        /*for(int i = 0; i < ShashMap.size(); i++) {
+            double p = (double) ShashMap.get(i).get(2);
+            double q = (double) ShashMap.get(i+1).get(2);
+            if(p != q) {
+                TMapPolyLine StMapPolyLine_i = new TMapPolyLine();
+
+            }
+        }
+        1. ShashMap의 value 부분의 세번째 weight 값이 뒤랑 다르다면 새로운 TmapPolyLine 생성
+        */
+
         TMapPolyLine StMapPolyLine_0 = new TMapPolyLine();
         TMapPolyLine StMapPolyLine_1 = new TMapPolyLine();
         TMapPolyLine StMapPolyLine_2 = new TMapPolyLine();
         TMapPolyLine StMapPolyLine_3 = new TMapPolyLine();
+
         TMapPolyLine FtMapPolyLine_0 = new TMapPolyLine();
         TMapPolyLine FtMapPolyLine_1 = new TMapPolyLine();
         TMapPolyLine FtMapPolyLine_2 = new TMapPolyLine();
@@ -569,17 +584,8 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             case R.id.startText:
             case R.id.endText:
                 break;
-            /*case R.id.gps:
-                tMapView.setCenterPoint(gpsLat, gpsLon);
-                break;*/
             case R.id.call:
-                /*try {
-                    startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
-
-                /*if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
                     int permissionResult = checkSelfPermission(Manifest.permission.CALL_PHONE);
 
                     if (permissionResult == PackageManager.PERMISSION_DENIED) {
@@ -615,7 +621,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 else {
                     Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:01024763270"));
                     startActivity(intent);
-                }*/
+                }
                 break;
         }
     }
@@ -659,10 +665,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                         break;
                     case R.id.menu_help:
                         intent = new Intent(MainActivity.this, Help.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.menu_myplace:
-                        intent = new Intent(MainActivity.this, My_place.class);
                         startActivity(intent);
                         break;
                 }
